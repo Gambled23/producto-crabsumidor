@@ -15,6 +15,11 @@ fn main() {
 }
 
 fn produce(buffer: &mut [bool; 20], number: u8, position: &mut u8) {
+    let free_space: u8 = 20 - *position;
+    if free_space < number{
+        println!("Buffer is full, crabn't produce more.");
+        return;
+    }
     for i in 0..number {
         buffer[(i as usize) + (*position as usize)] = true;
     }
