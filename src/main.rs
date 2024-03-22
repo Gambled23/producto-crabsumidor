@@ -12,16 +12,33 @@ fn main() {
 
     loop {
         random_number = rng.gen_range(1..5);
-        produce(&mut buffer, random_number, &mut producer_position, &mut free_space);
         println!("Producing {}", random_number);
-        println!("Buffer: {:?}", buffer);
-
+        produce(&mut buffer, random_number, &mut producer_position, &mut free_space);
+        for &value in buffer.iter() { // print buffer
+            if value {
+                print!("x");
+            } else {
+                print!("_");
+            }
+        }
+        println!();
+        println!();
         thread::sleep(Duration::from_secs(2));
 
         random_number = rng.gen_range(1..5);
-        consume(&mut buffer, random_number, &mut consumer_position, &mut free_space);
         println!("Consuming {}", random_number);
-        println!("Buffer: {:?}", buffer);
+        consume(&mut buffer, random_number, &mut consumer_position, &mut free_space);
+        
+        for &value in buffer.iter() { // print buffer
+            if value {
+                print!("x");
+            } else {
+                print!("_");
+            }
+        }
+        println!();
+        println!();
+        thread::sleep(Duration::from_secs(2));
     }
 }
 
@@ -33,8 +50,12 @@ fn produce(buffer: &mut [bool; 20], number: u8, position: &mut u8, free_space: &
     }
     
     for _ in 0..number { // fill buffer with the number of elements
+        if *position == 20 { // reset position if it reaches the end of the buffer
+            *position = 0;
+        }
         buffer[*position as usize] = true;
         *position += 1; 
+        *free_space -= 1;
     }
 }
 
@@ -45,9 +66,13 @@ fn consume(buffer: &mut [bool; 20], number: u8, position: &mut u8, free_space: &
         return;
     }
 
-    for i in 0..number { // fill buffer with the number of elements
-        buffer[(i as usize) + (*position as usize)] = false;
+    for _ in 0..number { // fill buffer with the number of elements
+        if *position == 20 { // reset position if it reaches the end of the buffer
+            *position = 0;
+        }
+        buffer[*position as usize] = false;
         *position += 1; 
+        *free_space += 1;
     }
 
 }
