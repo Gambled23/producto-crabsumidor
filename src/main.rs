@@ -11,34 +11,38 @@ fn main() {
     let mut free_space: u8 = 20;
 
     loop {
-        random_number = rng.gen_range(1..5);
-        println!("Producing {}", random_number);
-        produce(&mut buffer, random_number, &mut producer_position, &mut free_space);
-        for &value in buffer.iter() { // print buffer
-            if value {
-                print!("x");
-            } else {
-                print!("_");
-            }
-        }
-        println!();
-        println!();
-        thread::sleep(Duration::from_secs(2));
-
-        random_number = rng.gen_range(1..5);
-        println!("Consuming {}", random_number);
-        consume(&mut buffer, random_number, &mut consumer_position, &mut free_space);
+        let random_boolean = rng.gen_bool(0.5);
         
-        for &value in buffer.iter() { // print buffer
-            if value {
-                print!("x");
-            } else {
-                print!("_");
+        if random_boolean == true {
+            random_number = rng.gen_range(1..5);
+            println!("Producing {}", random_number);
+            produce(&mut buffer, random_number, &mut producer_position, &mut free_space);
+            for &value in buffer.iter() { // print buffer
+                if value {
+                    print!("x");
+                } else {
+                    print!("_");
+                }
             }
+            println!();
+            println!();
+            thread::sleep(Duration::from_secs(2));
+        } else {
+            random_number = rng.gen_range(1..5);
+            println!("Consuming {}", random_number);
+            consume(&mut buffer, random_number, &mut consumer_position, &mut free_space);
+            
+            for &value in buffer.iter() { // print buffer
+                if value {
+                    print!("x");
+                } else {
+                    print!("_");
+                }
+            }
+            println!();
+            println!();
+            thread::sleep(Duration::from_secs(2));
         }
-        println!();
-        println!();
-        thread::sleep(Duration::from_secs(2));
     }
 }
 
